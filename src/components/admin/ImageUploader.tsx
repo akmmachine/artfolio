@@ -2,30 +2,42 @@ import React, { useState, useRef } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Upload, Link as LinkIcon, Shuffle, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, Link as LinkIcon, Shuffle, X, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { uploadImage } from '../../lib/storage';
 
 interface ImageUploaderProps {
   value: string;
   onChange: (url: string) => void;
   label?: string;
+  folder?: string;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, label = "Image" }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ 
+  value, 
+  onChange, 
+  label = "Image",
+  folder = "general"
+}) => {
   const [mode, setMode] = useState<'url' | 'upload'>('url');
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>(value);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setPreview(base64String);
-        onChange(base64String);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setIsUploading(true);
+        const url = await uploadImage(file, folder);
+        setPreview(url);
+        onChange(url);
+      } catch (error) {
+        console.error('Upload failed:', error);
+        alert('Failed to upload image. Please try again.');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -97,10 +109,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
           </div>
         ) : (
           <div
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => !isUploading && fileInputRef.current?.click()}
             className={cn(
               "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors hover:bg-muted/50",
-              preview ? "border-primary/50 bg-primary/5" : "border-muted"
+              preview ? "border-primary/50 bg-primary/5" : "border-muted",
+              isUploading && "opacity-50 cursor-not-allowed"
             )}
           >
             <input
@@ -109,13 +122,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
               className="hidden"
               accept="image/*"
               onChange={handleFileChange}
+              disabled={isUploading}
             />
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Upload className="h-6 w-6 text-primary" />
+              {isUploading ? (
+                <Loader2 className="h-6 w-6 text-primary animate-spin" />
+              ) : (
+                <Upload className="h-6 w-6 text-primary" />
+              )}
             </div>
             <div className="text-center">
-              <p className="text-sm font-medium">Click to upload or drag and drop</p>
-              <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (max. 2MB recommended for local storage)</p>
+              <p className="text-sm font-medium">
+                {isUploading ? "Uploading to Firebase..." : "Click to upload or drag and drop"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (Direct to Cloud Storage)</p>
             </div>
           </div>
         )}
@@ -145,3 +165,4 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ value, onChange, l
     </div>
   );
 };
+

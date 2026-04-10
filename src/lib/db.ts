@@ -1,66 +1,53 @@
-import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { db } from './firebase';
+import { 
+  collection, 
+  getDocs, 
+  addDoc, 
+  setDoc, 
+  doc, 
+  deleteDoc, 
+  query, 
+  orderBy 
+} from 'firebase/firestore';
 import { ArtPiece, BlogPost } from '../types';
 
-interface PortfolioDB extends DBSchema {
-  artPieces: {
-    key: string;
-    value: ArtPiece;
-  };
-  blogPosts: {
-    key: string;
-    value: BlogPost;
-  };
-}
-
-const DB_NAME = 'portfolio-db';
-const DB_VERSION = 1;
-
-let dbPromise: Promise<IDBPDatabase<PortfolioDB>>;
-
-export const getDB = () => {
-  if (!dbPromise) {
-    dbPromise = openDB<PortfolioDB>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains('artPieces')) {
-          db.createObjectStore('artPieces', { keyPath: 'id' });
-        }
-        if (!db.objectStoreNames.contains('blogPosts')) {
-          db.createObjectStore('blogPosts', { keyPath: 'id' });
-        }
-      },
-    });
-  }
-  return dbPromise;
-};
-
 export const dbService = {
+  // --- Art Section ---
   async getAllArt() {
-    const db = await getDB();
-    return db.getAll('artPieces');
+    const artCollection = collection(db, 'artPieces');
+    const q = query(artCollection, orderBy('date', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ArtPiece));
   },
+
   async addArt(piece: ArtPiece) {
-    const db = await getDB();
-    await db.put('artPieces', piece);
+    // If id is provided, we use it as the document ID, otherwise Firestore generates one
+    const artDocRef = piece.id ? doc(db, 'artPieces', piece.id) : doc(collection(db, 'artPieces'));
+    const finalPiece = { ...piece, id: artDocRef.id };
+    await setDoc(artDocRef, finalPiece);
+    return finalPiece;
   },
+
   async deleteArt(id: string) {
-    const db = await getDB();
-    await db.delete('artPieces', id);
+    await deleteDoc(doc(db, 'artPieces', id));
   },
+
+  // --- Blog Section ---
   async getAllPosts() {
-    const db = await getDB();
-    return db.getAll('blogPosts');
+    const blogCollection = collection(db, 'blogPosts');
+    const q = query(blogCollection, orderBy('date', 'desc'));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BlogPost));
   },
+
   async addPost(post: BlogPost) {
-    const db = await getDB();
-    await db.put('blogPosts', post);
+    const blogDocRef = post.id ? doc(db, 'blogPosts', post.id) : doc(collection(db, 'blogPosts'));
+    const finalPost = { ...post, id: blogDocRef.id };
+    await setDoc(blogDocRef, finalPost);
+    return finalPost;
   },
+
   async deletePost(id: string) {
-    const db = await getDB();
-    await db.delete('blogPosts', id);
-  },
-  async clearAll() {
-    const db = await getDB();
-    await db.clear('artPieces');
-    await db.clear('blogPosts');
+    await deleteDoc(doc(db, 'blogPosts', id));
   }
 };
