@@ -57,6 +57,13 @@ export const AdminDashboard: React.FC = () => {
   // Crop states
   const [tempImage, setTempImage] = useState<string | null>(null);
 
+  // Sync profile form when profile data loads
+  React.useEffect(() => {
+    if (profile) {
+      setProfileForm(profile);
+    }
+  }, [profile]);
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
@@ -202,7 +209,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div>
             <h2 className="font-display font-bold text-lg leading-none">Admin Panel</h2>
-            <p className="text-xs text-muted-foreground mt-1">v1.0.5 • IndexedDB Storage</p>
+            <p className="text-xs text-muted-foreground mt-1">v1.0.5 • Cloud Sync</p>
           </div>
         </div>
 
@@ -398,8 +405,8 @@ export const AdminDashboard: React.FC = () => {
                           <Label>Category</Label>
                           <select 
                             className="w-full h-10 px-3 rounded-md bg-background border outline-none focus:ring-2 ring-primary/20"
-                            value={artForm.category}
-                            onChange={e => setArtForm({...artForm, category: e.target.value as any})}
+                            value={artForm.category || 'painting'}
+                            onChange={e => setArtForm({...artForm, category: e.target.value as ArtPiece['category']})}
                           >
                             <option value="painting">Painting</option>
                             <option value="drawing">Drawing</option>
@@ -615,6 +622,8 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 )}
               </motion.div>
+            )}
+
             {/* Settings View */}
             {activeView === 'settings' && (
               <motion.div
