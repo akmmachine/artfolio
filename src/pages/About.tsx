@@ -47,14 +47,17 @@ export const About: React.FC = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 pt-8 border-t">
             <div>
-              <h4 className="text-3xl font-display font-bold text-primary">2+</h4>
+              <h4 className="text-3xl font-display font-bold text-primary">10+</h4>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">Years Exp.</p>
             </div>
             <div>
-              <h4 className="text-3xl font-display font-bold text-primary">2+</h4>
+              <h4 className="text-3xl font-display font-bold text-primary">200+</h4>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">Artworks</p>
             </div>
-
+            <div>
+              <h4 className="text-3xl font-display font-bold text-primary">15</h4>
+              <p className="text-sm text-muted-foreground uppercase tracking-wider">Exhibitions</p>
+            </div>
           </div>
         </motion.div>
       </div>
