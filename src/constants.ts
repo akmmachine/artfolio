@@ -1,0 +1,88 @@
+import { ArtPiece, BlogPost } from './types';
+
+export const ART_PIECES: ArtPiece[] = [
+  {
+    id: '1',
+    title: 'Ethereal Whispers',
+    category: 'painting',
+    imageUrl: 'https://picsum.photos/seed/art1/800/1000',
+    highResUrl: 'https://picsum.photos/seed/art1/1600/2000',
+    description: 'An oil painting exploring the boundary between dreams and reality.',
+    date: '2024-01-15',
+  },
+  {
+    id: '2',
+    title: 'Neon Pulse',
+    category: 'digital',
+    imageUrl: 'https://picsum.photos/seed/art2/1000/800',
+    highResUrl: 'https://picsum.photos/seed/art2/2000/1600',
+    description: 'A digital piece capturing the vibrant energy of a futuristic cityscape.',
+    date: '2024-02-10',
+  },
+  {
+    id: '3',
+    title: 'Silent Guardian',
+    category: 'drawing',
+    imageUrl: 'https://picsum.photos/seed/art3/800/1200',
+    highResUrl: 'https://picsum.photos/seed/art3/1600/2400',
+    description: 'A charcoal drawing of an ancient tree standing alone in the mist.',
+    date: '2023-11-20',
+  },
+  {
+    id: '4',
+    title: 'Chromatic Flow',
+    category: 'painting',
+    imageUrl: 'https://picsum.photos/seed/art4/1200/800',
+    highResUrl: 'https://picsum.photos/seed/art4/2400/1600',
+    description: 'Abstract watercolor piece focusing on the movement of color.',
+    date: '2024-03-05',
+  },
+  {
+    id: '5',
+    title: 'Cybernetic Soul',
+    category: 'digital',
+    imageUrl: 'https://picsum.photos/seed/art5/800/800',
+    highResUrl: 'https://picsum.photos/seed/art5/1600/1600',
+    description: 'Exploring the intersection of humanity and technology.',
+    date: '2024-03-12',
+  },
+  {
+    id: '6',
+    title: 'Midnight Sketch',
+    category: 'drawing',
+    imageUrl: 'https://picsum.photos/seed/art6/900/1200',
+    highResUrl: 'https://picsum.photos/seed/art6/1800/2400',
+    description: 'Quick ink sketch of a street scene at night.',
+    date: '2024-03-20',
+  },
+];
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    id: '1',
+    title: 'My Creative Process: From Sketch to Final Piece',
+    excerpt: 'A deep dive into how I approach a new artwork, starting from the very first pencil stroke.',
+    content: 'Creative work is often seen as a mysterious flash of inspiration, but for me, it is a disciplined process...',
+    date: '2024-03-01',
+    category: 'Process',
+    imageUrl: 'https://picsum.photos/seed/blog1/1200/600',
+  },
+  {
+    id: '2',
+    title: 'The Shift to Digital: Why I Embraced the Tablet',
+    excerpt: 'Exploring the advantages and challenges of moving from traditional media to digital art.',
+    content: 'For years, I was a traditionalist. I loved the smell of oil paint and the texture of paper...',
+    date: '2024-02-15',
+    category: 'Technology',
+    imageUrl: 'https://picsum.photos/seed/blog2/1200/600',
+  },
+  {
+    id: '3',
+    title: 'Finding Inspiration in Everyday Objects',
+    excerpt: 'How to train your eye to see the beauty and artistic potential in the mundane.',
+    content: 'Inspiration is everywhere if you know how to look. A coffee stain, a shadow on the wall...',
+    date: '2024-01-20',
+    category: 'Inspiration',
+    imageUrl: 'https://picsum.photos/seed/blog3/1200/600',
+  },
+];
