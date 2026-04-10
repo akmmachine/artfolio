@@ -4,8 +4,8 @@
  */
 
 // REPLACE THESE with your actual Cloudinary credentials
-const CLOUD_NAME = "YOUR_CLOUD_NAME";
-const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+const CLOUD_NAME = "dkihytoyz";
+const UPLOAD_PRESET = "artfolio_data";
 
 /**
  * Uploads an image to Cloudinary and returns the secure URL
