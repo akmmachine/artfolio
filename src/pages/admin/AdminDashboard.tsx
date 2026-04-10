@@ -41,6 +41,7 @@ export const AdminDashboard: React.FC = () => {
   } = useData();
   const [activeView, setActiveView] = useState<DashboardView>('overview');
   const [isAdding, setIsAdding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form states
@@ -65,17 +66,26 @@ export const AdminDashboard: React.FC = () => {
       setError('Please upload or provide a URL for the artwork image.');
       return;
     }
-    setError(null);
     
-    if (editingId) {
-      await updateArtPiece({ ...artForm, id: editingId } as ArtPiece);
-    } else {
-      await addArtPiece(artForm as Omit<ArtPiece, 'id'>);
+    try {
+      setIsSaving(true);
+      setError(null);
+      
+      if (editingId) {
+        await updateArtPiece({ ...artForm, id: editingId } as ArtPiece);
+      } else {
+        await addArtPiece(artForm as Omit<ArtPiece, 'id'>);
+      }
+      
+      setArtForm({ category: 'painting' });
+      setIsAdding(false);
+      setEditingId(null);
+    } catch (err: any) {
+      console.error('Save failed:', err);
+      setError(err.message || 'Failed to save artwork to database. Please check your internet and Firebase rules.');
+    } finally {
+      setIsSaving(false);
     }
-    
-    setArtForm({ category: 'painting' });
-    setIsAdding(false);
-    setEditingId(null);
   };
 
   const handleAddBlog = async (e: React.FormEvent) => {
@@ -84,17 +94,26 @@ export const AdminDashboard: React.FC = () => {
       setError('Please upload or provide a URL for the blog cover image.');
       return;
     }
-    setError(null);
 
-    if (editingId) {
-      await updateBlogPost({ ...blogForm, id: editingId } as BlogPost);
-    } else {
-      await addBlogPost(blogForm as Omit<BlogPost, 'id'>);
+    try {
+      setIsSaving(true);
+      setError(null);
+
+      if (editingId) {
+        await updateBlogPost({ ...blogForm, id: editingId } as BlogPost);
+      } else {
+        await addBlogPost(blogForm as Omit<BlogPost, 'id'>);
+      }
+
+      setBlogForm({ category: 'General' });
+      setIsAdding(false);
+      setEditingId(null);
+    } catch (err: any) {
+      console.error('Save failed:', err);
+      setError(err.message || 'Failed to save blog post. Please check your internet and Firebase rules.');
+    } finally {
+      setIsSaving(false);
     }
-
-    setBlogForm({ category: 'General' });
-    setIsAdding(false);
-    setEditingId(null);
   };
 
   const startEditingArt = (art: ArtPiece) => {
@@ -377,7 +396,9 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                       <div className="flex gap-4 pt-4">
                         <Button type="button" variant="outline" onClick={cancelEditing} className="flex-1 h-12 rounded-xl">Cancel</Button>
-                        <Button type="submit" className="flex-1 h-12 rounded-xl">{editingId ? 'Update Artwork' : 'Upload Artwork'}</Button>
+                        <Button type="submit" disabled={isSaving} className="flex-1 h-12 rounded-xl">
+                          {isSaving ? 'Saving to Cloud...' : (editingId ? 'Update Artwork' : 'Upload Artwork')}
+                        </Button>
                       </div>
                     </form>
                   </div>
@@ -503,7 +524,9 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                       <div className="flex gap-4 pt-4">
                         <Button type="button" variant="outline" onClick={cancelEditing} className="flex-1 h-12 rounded-xl">Cancel</Button>
-                        <Button type="submit" className="flex-1 h-12 rounded-xl">{editingId ? 'Update Post' : 'Publish Post'}</Button>
+                        <Button type="submit" disabled={isSaving} className="flex-1 h-12 rounded-xl">
+                          {isSaving ? 'Publishing...' : (editingId ? 'Update Post' : 'Publish Post')}
+                        </Button>
                       </div>
                     </form>
                   </div>
