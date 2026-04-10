@@ -40,63 +40,59 @@ export const Gallery: React.FC<GalleryProps> = ({ items }) => {
       ))}
 
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-6xl w-[95vw] p-0 overflow-hidden bg-background/80 backdrop-blur-2xl border-none shadow-2xl">
+        <DialogContent className="max-w-[90vw] lg:max-w-7xl w-full p-0 overflow-hidden bg-background/80 backdrop-blur-2xl border-none shadow-2xl rounded-[2.5rem]">
           {selectedItem && (
-            <div className="flex flex-col lg:flex-row h-full max-h-[92vh]">
-              {/* Image Section */}
-              <div className="flex-[3] bg-black/40 flex items-center justify-center overflow-hidden relative group min-h-[400px] lg:min-h-0">
+            <div className="flex flex-col lg:flex-row h-full max-h-[85vh]">
+              {/* Image Section (80%) */}
+              <div className="flex-[4] bg-black/20 flex items-center justify-center overflow-hidden relative group min-h-[300px] lg:min-h-0 border-r border-white/5">
                 <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   src={selectedItem.highResUrl}
                   alt={selectedItem.title}
-                  className="max-h-full max-w-full object-contain shadow-2xl transition-transform duration-700 hover:scale-[1.02]"
+                  className="max-h-full max-w-full object-contain p-4 transition-transform duration-700 hover:scale-[1.02]"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <div className="absolute top-6 left-6 flex gap-2">
-                  <Badge variant="secondary" className="bg-background/20 backdrop-blur-md border-white/10 text-white gap-2 px-3 py-1 animate-pulse">
+                <div className="absolute top-8 left-8">
+                  <Badge variant="secondary" className="bg-black/40 backdrop-blur-md border border-white/10 text-white gap-2 px-4 py-1.5 rounded-full text-[10px] tracking-widest uppercase">
                     <Maximize2 className="h-3 w-3" /> High Resolution
                   </Badge>
                 </div>
               </div>
 
-              {/* Details Section */}
-              <div className="flex-1 lg:max-w-md p-10 lg:p-14 flex flex-col gap-10 bg-background/40 overflow-y-auto">
+              {/* Details Section (20%) */}
+              <div className="flex-1 lg:max-w-[320px] p-8 lg:p-10 flex flex-col gap-8 bg-background/20 overflow-y-auto custom-scrollbar">
                 <div className="space-y-6">
-                  <Badge className="uppercase tracking-[0.2em] text-[10px] px-4 py-1.5 font-bold">
+                  <Badge className="uppercase tracking-[0.2em] text-[9px] px-3 py-1 font-bold rounded-full">
                     {selectedItem.category}
                   </Badge>
                   
-                  <div className="space-y-3">
-                    <h2 className="text-4xl md:text-5xl font-display font-bold leading-tight capitalize tracking-tight">
+                  <div className="space-y-4">
+                    <h2 className="text-3xl font-display font-bold leading-tight capitalize">
                       {selectedItem.title}
                     </h2>
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground font-medium">
+                    <div className="flex flex-col gap-3 text-xs text-muted-foreground font-medium">
                       <span className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-primary" /> {selectedItem.date}
+                        <Calendar className="h-3.5 w-3.5 text-primary" /> {selectedItem.date}
                       </span>
                       <span className="flex items-center gap-2">
-                        <Tag className="h-4 w-4 text-primary" /> Original Work
+                        <Tag className="h-3.5 w-3.5 text-primary" /> Original work
                       </span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="space-y-4 flex-1">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60">Description</h4>
-                  <p className="text-lg text-foreground/80 leading-relaxed font-light">
+                  <h4 className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/50">Description</h4>
+                  <p className="text-sm text-foreground/80 leading-relaxed font-light">
                     {selectedItem.description}
                   </p>
                 </div>
 
-                <div className="pt-10 border-t border-primary/10">
-                  <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10">
-                    <p className="text-xs text-muted-foreground italic leading-relaxed text-center">
-                      "Art is not what you see, but what you make others see." — All rights reserved. 
-                      Digital reproduction prohibited without permission.
-                    </p>
-                  </div>
+                <div className="pt-8 border-t border-white/5">
+                  <p className="text-[10px] text-muted-foreground/60 italic text-center leading-relaxed">
+                    Digital reproduction prohibited without permission.
+                  </p>
                 </div>
               </div>
             </div>
