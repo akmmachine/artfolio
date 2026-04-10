@@ -1,51 +1,54 @@
-import { storage } from './firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+/**
+ * Cloudinary Storage Utility
+ * Used for high-quality art and image uploads.
+ */
+
+// REPLACE THESE with your actual Cloudinary credentials
+const CLOUD_NAME = "YOUR_CLOUD_NAME";
+const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
 
 /**
- * Uploads an image to Firebase Storage with progress tracking
+ * Uploads an image to Cloudinary and returns the secure URL
  * @param file The file object from an input element
- * @param path The subdirectory in storage (e.g., 'portfolio' or 'blog')
  * @param onProgress Callback function that receives the percentage (0-100)
  */
-export const uploadImage = (
-  file: File, 
-  path: string = 'general',
+export const uploadImage = async (
+  file: File,
+  _path?: string, // Not used for Cloudinary unsigned
   onProgress?: (progress: number) => void
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
-    if (!file) {
-      reject(new Error('No file provided'));
-      return;
-    }
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
 
-    // Create a unique filename
-    const timestamp = Date.now();
-    const extension = file.name.split('.').pop();
-    const filename = `${timestamp}-${Math.random().toString(36).substring(2, 9)}.${extension}`;
-    
-    // Create a storage reference
-    const storageRef = ref(storage, `${path}/${filename}`);
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
 
-    // Create a resumable upload task
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, true);
 
-    // Listen for state changes, errors, and completion of the upload.
-    uploadTask.on('state_changed', 
-      (snapshot) => {
-        // Observe state change events such as progress, pause, and resume
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        if (onProgress) onProgress(progress);
-      }, 
-      (error) => {
-        // Handle unsuccessful uploads
-        reject(error);
-      }, 
-      () => {
-        // Handle successful uploads on complete
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          resolve(downloadURL);
-        });
+    // Track progress
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        const percentage = (event.loaded / event.total) * 100;
+        onProgress(percentage);
       }
-    );
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        resolve(response.secure_url);
+      } else {
+        const error = JSON.parse(xhr.responseText);
+        console.error('Cloudinary Error:', error);
+        reject(new Error(error.error?.message || 'Upload to Cloudinary failed'));
+      }
+    };
+
+    xhr.onerror = () => {
+      reject(new Error('Network error during Cloudinary upload'));
+    };
+
+    xhr.send(formData);
   });
 };
