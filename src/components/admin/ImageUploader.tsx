@@ -21,6 +21,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 }) => {
   const [mode, setMode] = useState<'url' | 'upload'>('url');
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string>(value);
 
@@ -29,7 +30,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     if (file) {
       try {
         setIsUploading(true);
-        const url = await uploadImage(file, folder);
+        setUploadProgress(0);
+        const url = await uploadImage(file, folder, (progress) => {
+          setUploadProgress(progress);
+        });
         setPreview(url);
         onChange(url);
       } catch (error) {
@@ -37,6 +41,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         alert('Failed to upload image. Please try again.');
       } finally {
         setIsUploading(false);
+        setUploadProgress(0);
       }
     }
   };
@@ -111,11 +116,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           <div
             onClick={() => !isUploading && fileInputRef.current?.click()}
             className={cn(
-              "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors hover:bg-muted/50",
+              "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors hover:bg-muted/50 relative overflow-hidden",
               preview ? "border-primary/50 bg-primary/5" : "border-muted",
-              isUploading && "opacity-50 cursor-not-allowed"
+              isUploading && "opacity-80 cursor-not-allowed"
             )}
           >
+            {isUploading && (
+              <div 
+                className="absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300 ease-out"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            )}
             <input
               type="file"
               ref={fileInputRef}
@@ -132,13 +143,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               )}
             </div>
             <div className="text-center">
-              <p className="text-sm font-medium">
-                {isUploading ? "Uploading to Firebase..." : "Click to upload or drag and drop"}
+              <p className="text-sm font-medium text-wrap max-w-xs">
+                {isUploading 
+                  ? `Uploading High Quality... ${Math.round(uploadProgress)}%` 
+                  : "Click to upload or drag and drop"
+                }
               </p>
-              <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (Direct to Cloud Storage)</p>
+              <p className="text-xs text-muted-foreground mt-1">PNG, JPG or WEBP (Cloud Storage)</p>
             </div>
           </div>
         )}
+
 
         {preview && (
           <div className="relative aspect-video rounded-xl overflow-hidden bg-muted group">
