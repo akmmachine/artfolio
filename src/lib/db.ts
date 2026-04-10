@@ -32,6 +32,19 @@ export const dbService = {
     await deleteDoc(doc(db, 'artPieces', id));
   },
 
+  // --- Profile Section ---
+  async getProfile() {
+    const docRef = doc(db, 'settings', 'profile');
+    const docSnap = await getDocs(query(collection(db, 'settings')));
+    const profileDoc = docSnap.docs.find(d => d.id === 'profile');
+    return profileDoc ? profileDoc.data() : null;
+  },
+
+  async updateProfile(data: any) {
+    const docRef = doc(db, 'settings', 'profile');
+    await setDoc(docRef, data, { merge: true });
+  },
+
   // --- Blog Section ---
   async getAllPosts() {
     const blogCollection = collection(db, 'blogPosts');

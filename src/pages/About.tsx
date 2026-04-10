@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Badge } from '../components/ui/badge';
-import profileImage from '../assets/Pablo_picasso_1.jpg.webp';
+import { useData } from '../context/DataContext';
 
 export const About: React.FC = () => {
+  const { profile } = useData();
+  const profileImage = profile?.imageUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop';
+
   return (
     <div className="container mx-auto px-4 py-24">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -12,10 +15,10 @@ export const About: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           className="relative"
         >
-          <div className="aspect-square rounded-full overflow-hidden border-8 border-muted/50 max-w-md mx-auto relative z-10 shadow-2xl">
+          <div className="aspect-square rounded-full overflow-hidden border-8 border-muted/50 max-w-md mx-auto relative z-10 shadow-2xl bg-muted">
             <img
               src={profileImage}
-              alt="The Artist"
+              alt={profile?.name || "The Artist"}
               className="w-full h-full object-cover"
             />
           </div>

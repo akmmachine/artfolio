@@ -22,22 +22,26 @@ import {
   Pencil
 } from 'lucide-react';
 import { ImageUploader } from '../../components/admin/ImageUploader';
+import { CropModal } from '../../components/admin/CropModal';
+import { uploadImage } from '../../lib/storage';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../../lib/utils';
 
-type DashboardView = 'overview' | 'art' | 'blog';
+type DashboardView = 'overview' | 'art' | 'blog' | 'settings';
 
 export const AdminDashboard: React.FC = () => {
   const { isAdmin, loading, logout } = useAuth();
   const { 
     artPieces, 
     blogPosts, 
+    profile,
     addArtPiece, 
     updateArtPiece,
     deleteArtPiece, 
     addBlogPost, 
     updateBlogPost,
-    deleteBlogPost 
+    deleteBlogPost,
+    updateProfile
   } = useData();
   const [activeView, setActiveView] = useState<DashboardView>('overview');
   const [isAdding, setIsAdding] = useState(false);
@@ -47,7 +51,11 @@ export const AdminDashboard: React.FC = () => {
   // Form states
   const [artForm, setArtForm] = useState<Partial<ArtPiece>>({ category: 'painting' });
   const [blogForm, setBlogForm] = useState<Partial<BlogPost>>({ category: 'General' });
+  const [profileForm, setProfileForm] = useState(profile || {});
   const [error, setError] = useState<string | null>(null);
+
+  // Crop states
+  const [tempImage, setTempImage] = useState<string | null>(null);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -59,6 +67,35 @@ export const AdminDashboard: React.FC = () => {
   );
   
   if (!isAdmin) return <Navigate to="/login" />;
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSaving(true);
+      setError(null);
+      await updateProfile(profileForm);
+      alert('Profile updated successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update profile.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleProfilePhotoUpload = async (blob: Blob) => {
+    try {
+      setIsSaving(true);
+      const file = new File([blob], 'profile-photo.webp', { type: 'image/webp' });
+      const url = await uploadImage(file, 'profile');
+      const updatedProfile = { ...profileForm, imageUrl: url };
+      setProfileForm(updatedProfile);
+      await updateProfile(updatedProfile);
+    } catch (err: any) {
+      setError('Failed to upload profile photo.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleAddArt = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,6 +210,7 @@ export const AdminDashboard: React.FC = () => {
           <SidebarItem view="overview" icon={LayoutDashboard} label="Overview" />
           <SidebarItem view="art" icon={ImageIcon} label="Art Portfolio" />
           <SidebarItem view="blog" icon={FileText} label="Blog Posts" />
+          <SidebarItem view="settings" icon={Settings} label="Settings" />
           
           <div className="mt-8 pt-8 border-t space-y-2">
             <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Quick Actions</p>
@@ -195,7 +233,7 @@ export const AdminDashboard: React.FC = () => {
 
         <div className="p-4 bg-muted/30 rounded-2xl">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Your data is stored in your browser's IndexedDB. This allows for larger image storage than standard local storage.
+            Logged in as <span className="text-foreground font-bold">{profile?.name}</span>. Your data is synced with Cloudinary and Firebase.
           </p>
         </div>
       </aside>
@@ -575,6 +613,88 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     )}
                   </div>
+                )}
+              </motion.div>
+            {/* Settings View */}
+            {activeView === 'settings' && (
+              <motion.div
+                key="settings"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="max-w-2xl mx-auto"
+              >
+                <div className="bg-background p-10 rounded-[2.5rem] border shadow-xl space-y-10">
+                  <div className="flex flex-col items-center gap-6">
+                    <div className="relative group">
+                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-muted/50 bg-muted relative">
+                        <img 
+                          src={profileForm.imageUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop'} 
+                          className="w-full h-full object-cover" 
+                        />
+                        {isSaving && (
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e: any) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => setTempImage(reader.result as string);
+                              reader.readAsDataURL(file);
+                            }
+                          };
+                          input.click();
+                        }}
+                        className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold">Artist Profile</h3>
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Manage public details</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleUpdateProfile} className="space-y-6">
+                    <div className="space-y-2">
+                        <Label>Full Name</Label>
+                        <Input 
+                          value={profileForm.name || ''} 
+                          onChange={e => setProfileForm({...profileForm, name: e.target.value})} 
+                          placeholder="Artist Name..."
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Professional Bio</Label>
+                        <Textarea 
+                          className="min-h-[120px]"
+                          value={profileForm.bio || ''} 
+                          onChange={e => setProfileForm({...profileForm, bio: e.target.value})} 
+                          placeholder="Tell your story..."
+                        />
+                    </div>
+                    <Button type="submit" disabled={isSaving} className="w-full h-12 rounded-xl">
+                      {isSaving ? 'Saving Changes...' : 'Update Public Profile'}
+                    </Button>
+                  </form>
+                </div>
+
+                {tempImage && (
+                  <CropModal
+                    image={tempImage}
+                    onCropComplete={handleProfilePhotoUpload}
+                    onClose={() => setTempImage(null)}
+                  />
                 )}
               </motion.div>
             )}

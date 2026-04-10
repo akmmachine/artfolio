@@ -6,12 +6,14 @@ import { dbService } from '../lib/db';
 interface DataContextType {
   artPieces: ArtPiece[];
   blogPosts: BlogPost[];
+  profile: any;
   addArtPiece: (piece: Omit<ArtPiece, 'id'>) => Promise<void>;
   updateArtPiece: (piece: ArtPiece) => Promise<void>;
   deleteArtPiece: (id: string) => Promise<void>;
   addBlogPost: (post: Omit<BlogPost, 'id'>) => Promise<void>;
   updateBlogPost: (post: BlogPost) => Promise<void>;
   deleteBlogPost: (id: string) => Promise<void>;
+  updateProfile: (data: any) => Promise<void>;
   loading: boolean;
 }
 
@@ -20,18 +22,21 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [artPieces, setArtPieces] = useState<ArtPiece[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initData = async () => {
       try {
-        const savedArt = await dbService.getAllArt();
-        const savedBlog = await dbService.getAllPosts();
+        const [savedArt, savedBlog, savedProfile] = await Promise.all([
+          dbService.getAllArt(),
+          dbService.getAllPosts(),
+          dbService.getProfile()
+        ]);
 
         if (savedArt.length > 0) {
           setArtPieces(savedArt);
         } else {
-          // Initial population
           for (const piece of ART_PIECES) {
             await dbService.addArt(piece);
           }
@@ -41,14 +46,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (savedBlog.length > 0) {
           setBlogPosts(savedBlog);
         } else {
-          // Initial population
           for (const post of BLOG_POSTS) {
             await dbService.addPost(post);
           }
           setBlogPosts(BLOG_POSTS);
         }
+
+        setProfile(savedProfile || { 
+          name: "Artist Name", 
+          bio: "Your bio here...",
+          imageUrl: "" 
+        });
       } catch (error) {
-        console.error('Failed to load data from IndexedDB:', error);
+        console.error('Failed to load data from Firebase:', error);
       } finally {
         setLoading(false);
       }
@@ -89,16 +99,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setBlogPosts(prev => prev.filter(p => p.id !== id));
   };
 
+  const updateProfile = async (data: any) => {
+    await dbService.updateProfile(data);
+    setProfile(prev => ({ ...prev, ...data }));
+  };
+
   return (
     <DataContext.Provider value={{ 
       artPieces, 
       blogPosts, 
+      profile,
       addArtPiece, 
       updateArtPiece,
       deleteArtPiece, 
       addBlogPost, 
       updateBlogPost,
       deleteBlogPost,
+      updateProfile,
       loading 
     }}>
       {children}
