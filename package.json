@@ -7,7 +7,7 @@
     "dev": "node node_modules/vite/bin/vite.js --port=3000 --host=0.0.0.0",
     "build": "node node_modules/vite/bin/vite.js build",
     "preview": "node node_modules/vite/bin/vite.js preview",
-    "clean": "rd /s /q dist",
+    "clean": "node -e \"const fs = require('fs'); if (fs.existsSync('dist')) fs.rmSync('dist', { recursive: true, force: true })\"",
     "lint": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
