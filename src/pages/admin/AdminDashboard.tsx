@@ -76,7 +76,22 @@ export const AdminDashboard: React.FC = () => {
   // Sync profile form when profile data loads
   React.useEffect(() => {
     if (profile) {
-      setProfileForm(profile);
+      setProfileForm({
+        ...profile,
+        aboutHeading: profile.aboutHeading || defaultAboutHeading,
+        contactHeading: profile.contactHeading || defaultContactHeading,
+        contactSubtext: profile.contactSubtext || defaultContactSubtext,
+        homeHeading: profile.homeHeading || defaultHomeHeading,
+        homeSubtext: profile.homeSubtext || defaultHomeSubtext,
+        stats: profile.stats || defaultStats,
+        contact: {
+          ...defaultContact,
+          ...profile.contact,
+          additionalSocials: profile.contact?.additionalSocials || []
+        },
+        defaultTheme: profile.defaultTheme || 'dark',
+        defaultColor: profile.defaultColor || 'zinc'
+      });
     }
   }, [profile]);
 
@@ -709,7 +724,6 @@ export const AdminDashboard: React.FC = () => {
                             />
                         </div>
                       </div>
-                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t">
                       <div className="space-y-6">
