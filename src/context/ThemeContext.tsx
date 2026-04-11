@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ThemeColor, ThemeConfig } from '../types';
+import { useData } from './DataContext';
 
 interface ThemeContextType {
   theme: ThemeConfig;
@@ -10,10 +11,18 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { profile } = useData();
   const [theme, setTheme] = useState<ThemeConfig>(() => {
     const saved = localStorage.getItem('app-theme');
     return saved ? JSON.parse(saved) : { color: 'zinc', mode: 'dark' };
   });
+
+  // Effect to sync with Admin-defined default theme
+  useEffect(() => {
+    if (profile?.defaultTheme && !localStorage.getItem('app-theme')) {
+      setTheme(prev => ({ ...prev, mode: profile.defaultTheme }));
+    }
+  }, [profile?.defaultTheme]);
 
   useEffect(() => {
     localStorage.setItem('app-theme', JSON.stringify(theme));

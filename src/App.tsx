@@ -20,9 +20,9 @@ import { ScrollArea } from './components/ui/scroll-area';
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <DataProvider>
+    <AuthProvider>
+      <DataProvider>
+        <ThemeProvider>
           <Router>
             <div className="min-h-screen bg-background text-foreground flex flex-col">
               <Navbar />
@@ -39,24 +39,24 @@ export default function App() {
                 </Routes>
               </main>
               <footer className="border-t py-12 bg-muted/20">
-              <div className="container mx-auto px-4 text-center">
-                <p className="text-2xl font-display font-bold mb-4 tracking-tighter">
-                  ART<span className="text-primary">FOLIO</span>
-                </p>
-                <p className="text-muted-foreground text-sm">
-                  © {new Date().getFullYear()} ArtFolio. All rights reserved.
-                </p>
-                <div className="mt-4">
-                  <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                    Admin Dashboard
-                  </Link>
+                <div className="container mx-auto px-4 text-center">
+                  <p className="text-2xl font-display font-bold mb-4 tracking-tighter">
+                    ART<span className="text-primary">FOLIO</span>
+                  </p>
+                  <p className="text-muted-foreground text-sm">
+                    © {new Date().getFullYear()} ArtFolio. All rights reserved.
+                  </p>
+                  <div className="mt-4">
+                    <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                      Admin Dashboard
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </footer>
-          </div>
-        </Router>
+              </footer>
+            </div>
+          </Router>
+        </ThemeProvider>
       </DataProvider>
     </AuthProvider>
-  </ThemeProvider>
   );
 }

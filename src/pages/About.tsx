@@ -32,7 +32,9 @@ export const About: React.FC = () => {
           <div>
             <Badge className="mb-4 uppercase tracking-widest">About Me</Badge>
             <h1 className="text-5xl md:text-6xl font-display font-bold leading-tight">
-              I believe art is a <span className="text-primary">universal language</span>.
+              {profile?.aboutHeading || (
+                <>I believe art is a <span className="text-primary">universal language</span>.</>
+              )}
             </h1>
           </div>
 
@@ -59,15 +61,15 @@ export const About: React.FC = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 pt-8 border-t">
             <div>
-              <h4 className="text-3xl font-display font-bold text-primary">10+</h4>
+              <h4 className="text-3xl font-display font-bold text-primary">{profile?.stats?.years || '10+'}</h4>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">Years Exp.</p>
             </div>
             <div>
-              <h4 className="text-3xl font-display font-bold text-primary">200+</h4>
+              <h4 className="text-3xl font-display font-bold text-primary">{profile?.stats?.artworks || '200+'}</h4>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">Artworks</p>
             </div>
             <div>
-              <h4 className="text-3xl font-display font-bold text-primary">15</h4>
+              <h4 className="text-3xl font-display font-bold text-primary">{profile?.stats?.exhibitions || '15'}</h4>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">Exhibitions</p>
             </div>
           </div>

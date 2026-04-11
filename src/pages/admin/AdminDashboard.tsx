@@ -57,6 +57,17 @@ export const AdminDashboard: React.FC = () => {
   // Crop states
   const [tempImage, setTempImage] = useState<string | null>(null);
 
+  // Default Stats if not present
+  const defaultStats = { years: '10+', artworks: '200+', exhibitions: '15' };
+  const defaultContact = { 
+    email: 'hello@artfolio.com', 
+    phone: '', 
+    address: '', 
+    instagram: '', 
+    twitter: '', 
+    linkedin: '' 
+  };
+
   // Sync profile form when profile data loads
   React.useEffect(() => {
     if (profile) {
@@ -673,27 +684,141 @@ export const AdminDashboard: React.FC = () => {
                       <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Manage public details</p>
                     </div>
                   </div>
+                  <form onSubmit={handleUpdateProfile} className="space-y-8 mt-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t">
+                      <div className="space-y-6">
+                        <h4 className="font-bold text-lg">Personal Identity</h4>
+                        <div className="space-y-2">
+                            <Label>Full Name</Label>
+                            <Input 
+                              value={profileForm.name || ''} 
+                              onChange={e => setProfileForm({...profileForm, name: e.target.value})} 
+                              placeholder="Artist Name..."
+                            />
+                        </div>
+                        <div className="space-y-4">
+                          <Label>Default Site Theme</Label>
+                          <div className="flex bg-muted rounded-xl p-1">
+                            <button
+                              type="button"
+                              onClick={() => setProfileForm({...profileForm, defaultTheme: 'light'})}
+                              className={cn(
+                                "flex-1 py-2 text-sm rounded-lg transition-all",
+                                profileForm.defaultTheme === 'light' ? "bg-background shadow-sm font-bold" : "text-muted-foreground"
+                              )}
+                            >
+                              Light Mode
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setProfileForm({...profileForm, defaultTheme: 'dark'})}
+                              className={cn(
+                                "flex-1 py-2 text-sm rounded-lg transition-all",
+                                profileForm.defaultTheme === 'dark' ? "bg-background shadow-sm font-bold" : "text-muted-foreground"
+                              )}
+                            >
+                              Dark Mode
+                            </button>
+                          </div>
+                        </div>
+                      </div>
 
-                  <form onSubmit={handleUpdateProfile} className="space-y-6">
-                    <div className="space-y-2">
-                        <Label>Full Name</Label>
-                        <Input 
-                          value={profileForm.name || ''} 
-                          onChange={e => setProfileForm({...profileForm, name: e.target.value})} 
-                          placeholder="Artist Name..."
-                        />
+                      <div className="space-y-6">
+                        <h4 className="font-bold text-lg">About Page Details</h4>
+                        <div className="space-y-2">
+                            <Label>About Page Heading</Label>
+                            <Input 
+                              value={profileForm.aboutHeading || ''} 
+                              onChange={e => setProfileForm({...profileForm, aboutHeading: e.target.value})} 
+                              placeholder="I believe art is a universal language..."
+                            />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-[10px] uppercase font-bold">Years Exp</Label>
+                            <Input 
+                              value={profileForm.stats?.years || ''} 
+                              onChange={e => setProfileForm({...profileForm, stats: { ...profileForm.stats, years: e.target.value }})} 
+                              placeholder="10+"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] uppercase font-bold">Artworks</Label>
+                            <Input 
+                              value={profileForm.stats?.artworks || ''} 
+                              onChange={e => setProfileForm({...profileForm, stats: { ...profileForm.stats, artworks: e.target.value }})} 
+                              placeholder="200+"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[10px] uppercase font-bold">Exhibitions</Label>
+                            <Input 
+                              value={profileForm.stats?.exhibitions || ''} 
+                              onChange={e => setProfileForm({...profileForm, stats: { ...profileForm.stats, exhibitions: e.target.value }})} 
+                              placeholder="15"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label>Professional Bio</Label>
+
+                    <div className="space-y-2 pt-4">
+                        <Label>Professional Bio / Story</Label>
                         <Textarea 
-                          className="min-h-[120px]"
+                          className="min-h-[160px]"
                           value={profileForm.bio || ''} 
                           onChange={e => setProfileForm({...profileForm, bio: e.target.value})} 
                           placeholder="Tell your story..."
                         />
                     </div>
-                    <Button type="submit" disabled={isSaving} className="w-full h-12 rounded-xl">
-                      {isSaving ? 'Saving Changes...' : 'Update Public Profile'}
+
+                    <div className="pt-8 border-t space-y-6">
+                      <h4 className="font-bold text-lg">Contact & Social Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label>Public Email</Label>
+                          <Input 
+                            value={profileForm.contact?.email || ''} 
+                            onChange={e => setProfileForm({...profileForm, contact: { ...profileForm.contact, email: e.target.value }})} 
+                            placeholder="hello@example.com"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Phone Number</Label>
+                          <Input 
+                            value={profileForm.contact?.phone || ''} 
+                            onChange={e => setProfileForm({...profileForm, contact: { ...profileForm.contact, phone: e.target.value }})} 
+                            placeholder="+91 0000000000"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Studio Address</Label>
+                          <Input 
+                            value={profileForm.contact?.address || ''} 
+                            onChange={e => setProfileForm({...profileForm, contact: { ...profileForm.contact, address: e.target.value }})} 
+                            placeholder="123 Creative Lane..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Instagram URL</Label>
+                          <Input 
+                            value={profileForm.contact?.instagram || ''} 
+                            onChange={e => setProfileForm({...profileForm, contact: { ...profileForm.contact, instagram: e.target.value }})} 
+                            placeholder="https://instagram.com/..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Twitter URL</Label>
+                          <Input 
+                            value={profileForm.contact?.twitter || ''} 
+                            onChange={e => setProfileForm({...profileForm, contact: { ...profileForm.contact, twitter: e.target.value }})} 
+                            placeholder="https://twitter.com/..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <Button type="submit" disabled={isSaving} className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/10">
+                      {isSaving ? 'Syncing with Firebase...' : 'Save All Settings'}
                     </Button>
                   </form>
                 </div>
