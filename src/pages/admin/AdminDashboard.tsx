@@ -61,12 +61,17 @@ export const AdminDashboard: React.FC = () => {
   const defaultStats = { years: '10+', artworks: '200+', exhibitions: '15' };
   const defaultContact = { 
     email: 'hello@artfolio.com', 
-    phone: '', 
-    address: '', 
+    phone: '+91 7728877446', 
+    address: '123 Creative Lane, Arts District\nJaipur, 302017', 
     instagram: '', 
     twitter: '', 
     linkedin: '' 
   };
+  const defaultAboutHeading = "I believe art is a universal language.";
+  const defaultContactHeading = "Let's Collaborate.";
+  const defaultContactSubtext = "Have a project in mind, want to commission a piece, or just want to say hello? I'd love to hear from you.";
+  const defaultHomeHeading = "Capturing Emotion Through Every Stroke.";
+  const defaultHomeSubtext = "A multidisciplinary artist specializing in traditional painting, digital illustration, and expressive sketches.";
 
   // Sync profile form when profile data loads
   React.useEffect(() => {
@@ -685,6 +690,27 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                   <form onSubmit={handleUpdateProfile} className="space-y-8 mt-10">
+                      <div className="space-y-6">
+                        <h4 className="font-bold text-lg">Home Page Content</h4>
+                        <div className="space-y-2">
+                            <Label>Hero Heading</Label>
+                            <Input 
+                              value={profileForm.homeHeading || ''} 
+                              onChange={e => setProfileForm({...profileForm, homeHeading: e.target.value})} 
+                              placeholder="Capturing Emotion..."
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Hero Subtext</Label>
+                            <Input 
+                              value={profileForm.homeSubtext || ''} 
+                              onChange={e => setProfileForm({...profileForm, homeSubtext: e.target.value})} 
+                              placeholder="A multidisciplinary artist..."
+                            />
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t">
                       <div className="space-y-6">
                         <h4 className="font-bold text-lg">Personal Identity</h4>
@@ -770,6 +796,28 @@ export const AdminDashboard: React.FC = () => {
                           onChange={e => setProfileForm({...profileForm, bio: e.target.value})} 
                           placeholder="Tell your story..."
                         />
+                    </div>
+
+                    <div className="pt-8 border-t space-y-6">
+                      <h4 className="font-bold text-lg">Contact Page Content</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label>Contact Heading</Label>
+                          <Input 
+                            value={profileForm.contactHeading || ''} 
+                            onChange={e => setProfileForm({...profileForm, contactHeading: e.target.value})} 
+                            placeholder="Let's Collaborate..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Contact Subtext</Label>
+                          <Input 
+                            value={profileForm.contactSubtext || ''} 
+                            onChange={e => setProfileForm({...profileForm, contactSubtext: e.target.value})} 
+                            placeholder="Have a project in mind..."
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="pt-8 border-t space-y-6">

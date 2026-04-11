@@ -20,10 +20,12 @@ export const Home: React.FC = () => {
             className="max-w-3xl"
           >
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-bold tracking-tighter leading-none mb-8">
-              Capturing <span className="text-primary italic">Emotion</span> Through Every Stroke.
+              {profile?.homeHeading || (
+                <>Capturing <span className="text-primary italic">Emotion</span> Through Every Stroke.</>
+              )}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
-              A multidisciplinary artist specializing in traditional painting, digital illustration, and expressive sketches.
+              {profile?.homeSubtext || "A multidisciplinary artist specializing in traditional painting, digital illustration, and expressive sketches."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="h-14 px-8 text-lg rounded-full gap-2 w-full sm:w-auto" render={<Link to="/portfolio" />}>

@@ -22,9 +22,13 @@ export const Contact: React.FC = () => {
           className="space-y-12"
         >
           <div>
-            <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">Let's <span className="text-primary">Collaborate</span>.</h1>
+            <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
+              {profile?.contactHeading || (
+                <>Let's <span className="text-primary">Collaborate</span>.</>
+              )}
+            </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Have a project in mind, want to commission a piece, or just want to say hello? I'd love to hear from you.
+              {profile?.contactSubtext || "Have a project in mind, want to commission a piece, or just want to say hello? I'd love to hear from you."}
             </p>
           </div>
 
