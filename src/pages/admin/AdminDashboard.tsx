@@ -328,7 +328,7 @@ export const AdminDashboard: React.FC = () => {
                             <p className="font-bold text-sm">{art.title}</p>
                             <p className="text-xs text-muted-foreground">{art.category}</p>
                           </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => startEditingArt(art)}>
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
@@ -355,7 +355,7 @@ export const AdminDashboard: React.FC = () => {
                             <p className="font-bold text-sm truncate">{post.title}</p>
                             <p className="text-xs text-muted-foreground">{post.date}</p>
                           </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => startEditingBlog(post)}>
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
@@ -453,7 +453,7 @@ export const AdminDashboard: React.FC = () => {
                       <div key={item.id} className="bg-background group rounded-3xl border overflow-hidden hover:shadow-xl transition-all duration-300">
                         <div className="aspect-[4/3] relative overflow-hidden cursor-pointer" onClick={() => startEditingArt(item)}>
                           <img src={item.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                          <div className="absolute top-4 right-4 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                             <Button 
                               variant="secondary" 
                               size="icon" 
@@ -578,19 +578,19 @@ export const AdminDashboard: React.FC = () => {
                 ) : (
                   <div className="space-y-4">
                     {blogPosts.map(post => (
-                      <div key={post.id} className="bg-background p-6 rounded-3xl border flex flex-col md:flex-row items-center gap-6 hover:shadow-lg transition-all duration-300 group cursor-pointer" onClick={() => startEditingBlog(post)}>
+                      <div key={post.id} className="bg-background p-4 md:p-6 rounded-3xl border flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 hover:shadow-lg transition-all duration-300 group cursor-pointer" onClick={() => startEditingBlog(post)}>
                         {post.imageUrl && (
                           <img src={post.imageUrl} className="w-full md:w-32 h-32 rounded-2xl object-cover" />
                         )}
-                        <div className="flex-1 min-w-0 text-center md:text-left">
-                          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+                        <div className="flex-1 min-w-0 text-left">
+                          <div className="flex flex-wrap items-center justify-start gap-3 mb-2">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">{post.category}</span>
                             <span className="text-xs text-muted-foreground">{post.date}</span>
                           </div>
-                          <h4 className="font-bold text-xl truncate">{post.title}</h4>
+                          <h4 className="font-bold text-lg md:text-xl line-clamp-2">{post.title}</h4>
                           <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{post.excerpt}</p>
                         </div>
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2 mt-2 md:mt-0" onClick={(e) => e.stopPropagation()}>
                           <Button 
                             variant="ghost" 
                             size="icon" 
