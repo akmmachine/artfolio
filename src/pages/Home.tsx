@@ -6,7 +6,7 @@ import { ArrowRight, Palette, PenTool, Monitor } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 export const Home: React.FC = () => {
-  const { artPieces } = useData();
+  const { artPieces, profile } = useData();
   const featuredArt = artPieces.slice(0, 4);
   return (
     <div className="flex flex-col gap-24 pb-24">
