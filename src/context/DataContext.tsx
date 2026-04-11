@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ArtPiece, BlogPost } from '../types';
 import { ART_PIECES, BLOG_POSTS } from '../constants';
 import { dbService } from '../lib/db';
+import { useAuth } from './AuthContext';
 
 interface DataContextType {
   artPieces: ArtPiece[];
@@ -25,6 +26,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const { isAdmin } = useAuth();
+
   useEffect(() => {
     const initData = async () => {
       try {
@@ -36,19 +39,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (savedArt.length > 0) {
           setArtPieces(savedArt);
-        } else {
+        } else if (isAdmin) {
+          // Only seed data if user is an admin
           for (const piece of ART_PIECES) {
             await dbService.addArt(piece);
           }
+          setArtPieces(ART_PIECES);
+        } else {
+          // Public visitor seeing empty DB
           setArtPieces(ART_PIECES);
         }
 
         if (savedBlog.length > 0) {
           setBlogPosts(savedBlog);
-        } else {
+        } else if (isAdmin) {
+          // Only seed data if user is an admin
           for (const post of BLOG_POSTS) {
             await dbService.addPost(post);
           }
+          setBlogPosts(BLOG_POSTS);
+        } else {
+          // Public visitor seeing empty DB
           setBlogPosts(BLOG_POSTS);
         }
 
@@ -65,7 +76,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     initData();
-  }, []);
+  }, [isAdmin]);
 
   const addArtPiece = async (piece: Omit<ArtPiece, 'id'>) => {
     const newPiece = { ...piece, id: Date.now().toString() } as ArtPiece;
