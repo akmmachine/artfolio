@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContactForm } from '../components/ContactForm';
 import { motion } from 'motion/react';
-import { Mail, MapPin, Phone, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { Mail, MapPin, Phone, Instagram, Twitter, Linkedin, Globe } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 export const Contact: React.FC = () => {
@@ -72,19 +72,38 @@ export const Contact: React.FC = () => {
 
           <div className="pt-8 border-t">
             <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">Follow My Journey</h4>
-            <div className="flex gap-4">
-              {socialLinks.length > 0 ? (
-                socialLinks.map((link, i) => (
-                  <a
-                    key={i}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-full border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
-                  >
-                    <link.Icon className="h-5 w-5" />
-                  </a>
-                ))
+            <div className="flex flex-wrap gap-4">
+              {socialLinks.length > 0 || profile?.contact?.additionalSocials?.length > 0 ? (
+                <>
+                  {socialLinks.map((link, i) => (
+                    <a
+                      key={i}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all group relative"
+                    >
+                      <link.Icon className="h-5 w-5" />
+                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-widest font-bold">
+                        {link.Icon.name.replace('Lucide', '')}
+                      </span>
+                    </a>
+                  ))}
+                  {profile?.contact?.additionalSocials?.map((social, i) => (
+                    <a
+                      key={`extra-${i}`}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all group relative"
+                    >
+                      <Globe className="h-5 w-5" />
+                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-widest font-bold">
+                        {social.name}
+                      </span>
+                    </a>
+                  ))}
+                </>
               ) : (
                 <p className="text-xs text-muted-foreground italic">No social links added yet.</p>
               )}

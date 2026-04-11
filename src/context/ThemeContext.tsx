@@ -19,10 +19,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Effect to sync with Admin-defined default theme
   useEffect(() => {
-    if (profile?.defaultTheme && !localStorage.getItem('app-theme')) {
-      setTheme(prev => ({ ...prev, mode: profile.defaultTheme }));
+    if (!localStorage.getItem('app-theme')) {
+      if (profile?.defaultTheme || profile?.defaultColor) {
+        setTheme(prev => ({ 
+          ...prev, 
+          mode: profile.defaultTheme || prev.mode,
+          color: profile.defaultColor || prev.color 
+        }));
+      }
     }
-  }, [profile?.defaultTheme]);
+  }, [profile?.defaultTheme, profile?.defaultColor]);
 
   useEffect(() => {
     localStorage.setItem('app-theme', JSON.stringify(theme));

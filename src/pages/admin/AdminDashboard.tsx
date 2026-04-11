@@ -747,6 +747,30 @@ export const AdminDashboard: React.FC = () => {
                             </button>
                           </div>
                         </div>
+
+                        <div className="space-y-4">
+                          <Label>Default Accent Color</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              { name: 'zinc', class: 'bg-zinc-500' },
+                              { name: 'rose', class: 'bg-rose-500' },
+                              { name: 'blue', class: 'bg-blue-500' },
+                              { name: 'green', class: 'bg-green-500' },
+                              { name: 'orange', class: 'bg-orange-500' },
+                            ].map((c) => (
+                              <button
+                                key={c.name}
+                                type="button"
+                                onClick={() => setProfileForm({...profileForm, defaultColor: c.name})}
+                                className={cn(
+                                  "w-8 h-8 rounded-full transition-all",
+                                  c.class,
+                                  profileForm.defaultColor === c.name ? "ring-2 ring-primary ring-offset-2 scale-110" : "opacity-60 hover:opacity-100"
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-6">
@@ -863,6 +887,63 @@ export const AdminDashboard: React.FC = () => {
                             placeholder="https://twitter.com/..."
                           />
                         </div>
+                      </div>
+
+                      <div className="space-y-4 pt-4">
+                        <div className="flex items-center justify-between">
+                          <Label>Additional Social Links</Label>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => {
+                              const extras = profileForm.contact?.additionalSocials || [];
+                              setProfileForm({
+                                ...profileForm, 
+                                contact: { 
+                                  ...profileForm.contact, 
+                                  additionalSocials: [...extras, { name: '', url: '' }] 
+                                }
+                              });
+                            }}
+                          >
+                            + Add Link
+                          </Button>
+                        </div>
+                        {profileForm.contact?.additionalSocials?.map((social: any, idx: number) => (
+                          <div key={idx} className="flex gap-2 items-center">
+                            <Input 
+                              placeholder="App Name (e.g. Behance)" 
+                              value={social.name}
+                              onChange={e => {
+                                const newExtras = [...profileForm.contact.additionalSocials!];
+                                newExtras[idx].name = e.target.value;
+                                setProfileForm({...profileForm, contact: {...profileForm.contact, additionalSocials: newExtras}});
+                              }}
+                              className="w-1/3"
+                            />
+                            <Input 
+                              placeholder="URL" 
+                              value={social.url}
+                              onChange={e => {
+                                const newExtras = [...profileForm.contact.additionalSocials!];
+                                newExtras[idx].url = e.target.value;
+                                setProfileForm({...profileForm, contact: {...profileForm.contact, additionalSocials: newExtras}});
+                              }}
+                              className="flex-1"
+                            />
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => {
+                                const newExtras = profileForm.contact.additionalSocials!.filter((_: any, i: number) => i !== idx);
+                                setProfileForm({...profileForm, contact: {...profileForm.contact, additionalSocials: newExtras}});
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        ))}
                       </div>
                     </div>
                     <Button type="submit" disabled={isSaving} className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/10">
